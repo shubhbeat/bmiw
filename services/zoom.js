@@ -27,7 +27,10 @@ class ZoomService {
 
   async createWebinar({ title, agenda, scheduledAt, durationMinutes = 90, timezone = 'Asia/Kolkata' }) {
     const token = await this.getAccessToken();
+    const TEMPLATE_ID = 'qId8cAzTSReIeLMtn6II0g';
+
     try {
+      // First try with template
       const response = await axios.post(
         `https://api.zoom.us/v2/users/me/webinars`,
         {
@@ -37,26 +40,20 @@ class ZoomService {
           duration: durationMinutes,
           timezone,
           agenda: agenda || '',
+          template_id: TEMPLATE_ID,
           settings: {
             host_video: true,
             panelists_video: true,
-            practice_session: false,
-            hd_video: true,
             approval_type: 0,
-            registration_type: 1,
             audio: 'both',
-            auto_recording: 'none',
-            enforce_login: false,
-            close_registration: false,
-            show_share_button: false,
-            allow_multiple_devices: true,
-            on_demand: false
+            auto_recording: 'none'
           }
         },
         { headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' } }
       );
+
       const w = response.data;
-      console.log('✅ Zoom webinar created:', w.id);
+      console.log('✅ Zoom webinar created from template:', w.id);
       return {
         meetingId: w.id.toString(),
         joinUrl: w.join_url,
