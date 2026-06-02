@@ -19,20 +19,15 @@ const pool = new Pool({
 const checkAndRunWebinars = async () => {
   try {
     const now = moment().tz('Asia/Kolkata');
-    const windowStart = now.clone().subtract(2, 'minutes').toISOString();
-    const windowEnd = now.clone().add(2, 'minutes').toISOString();
-
     const { rows: sessions } = await pool.query(`
-      SELECT 
-        s.*,
-        c.video_url,
-        c.webinar_title
-      FROM sessions s
-      JOIN campaigns c ON s.campaign_id = c.id
-      WHERE s.scheduled_at BETWEEN $1 AND $2
-        AND s.status = 'scheduled'
-        AND c.video_url IS NOT NULL
-    `, [windowStart, windowEnd]);
+  SELECT s.*, c.video_url, c.webinar_title
+  FROM sessions s
+  JOIN campaigns c ON s.campaign_id = c.id
+  WHERE s.scheduled_at BETWEEN NOW() - INTERVAL '2 minutes' 
+    AND NOW() + INTERVAL '2 minutes'
+    AND s.status = 'scheduled'
+    AND c.video_url IS NOT NULL
+`);
 
     for (const session of sessions) {
       console.log(`🎬 Starting webinar bot for session: ${session.id}`);
