@@ -1,8 +1,8 @@
 [phases.setup]
-nixPkgs = ["nodejs", "chromium", "nss", "freetype", "harfbuzz", "cacert", "dejavu_fonts"]
+nixPkgs = ["nodejs_22", "chromium"]
 
 [phases.install]
-cmds = ["npm install"]
+cmds = ["npm ci"]
 
 [start]
 cmd = "node server.js"
@@ -10,3 +10,4 @@ cmd = "node server.js"
 [variables]
 PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = "true"
 PUPPETEER_EXECUTABLE_PATH = "/run/current-system/sw/bin/chromium"
+NODE_ENV = "production"
